@@ -8,6 +8,7 @@ from pydantic import (
 from pydantic_settings import BaseSettings
 import os
 
+
 class LogLevels(str, Enum):
     """ Enum of permitted log levels. """
     Debug = "debug"
@@ -15,6 +16,7 @@ class LogLevels(str, Enum):
     Warning = "warning"
     Error = "error"
     Critical = "critical"
+
 
 class ServerConfig(BaseSettings):
     """ Settings for server running """
@@ -25,17 +27,14 @@ class ServerConfig(BaseSettings):
     Mode: str
     NameService: str
 
+
 class RabbitMQ(BaseSettings):
     """ Settings for RabbitMQ Server """
     Host: str
     Port: int
     User: str
     Password: str
-    Exchange: str
-    Queue: str
-    RoutingKey: str
-    ConsumerTag: str
-    WorkerPoolSize: int
+
 
 class ApiConfigSettings(BaseSettings):
     """ Settings for FastAPI Server """
@@ -44,15 +43,20 @@ class ApiConfigSettings(BaseSettings):
     Version: str
     Docs_url: str
 
+
 class Settings(BaseSettings):
     Api_config: ApiConfigSettings
     Rabbitmq: RabbitMQ
     Server: ServerConfig
+
+
 def LoadFromYAML() -> Any:
-    configFileLocation = os.path.join(os.getcwd(), "config/config.yaml")
+    configFileLocation = os.path.join(os.getcwd(), "app/config/config.yaml")
     with open(configFileLocation) as fp:
         config = yaml.safe_load(fp)
     return config
+
+
 @lru_cache()
 def GetSettings() -> Settings:
     yaml_config = LoadFromYAML()

@@ -1,13 +1,12 @@
 import logging
 import uvicorn
-import sys
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from config.config import GetSettings
+from app.config.config import GetSettings
 from pkg.http_response.response import error_response
 
 from internal.v1.routes import apiRouter
