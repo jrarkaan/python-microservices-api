@@ -1,11 +1,12 @@
 from fastapi import (
     APIRouter, Depends, Query
 )
-
+import json
 # Model/ DTO
 from pkg.rabbit.model.entity import RabbitMQ
 from pkg.http_response.response import error_response, success_response
 from starlette.responses import JSONResponse
+from internal.v1.utilities.sales.model.entity import SalesQueue
 
 from app.rabbit.utilities.sales.sales import SalesRabbitMQ
 from pkg.rabbit.rabbit import RabbitMQConnection
@@ -22,7 +23,7 @@ async def getSales() -> JSONResponse:
 async def postSendSalesQueue() -> JSONResponse:
     salesRabbitMQ: RabbitMQ = SalesRabbitMQ()
     print(f"Exchange name: {salesRabbitMQ.exchange.Name}")
-    message = "hello consumer!!!!!"
+
     channel = RabbitMQConnection().channel()
     channel.exchange_declare(
         exchange=salesRabbitMQ.exchange.Name,
@@ -36,12 +37,27 @@ async def postSendSalesQueue() -> JSONResponse:
         exchange=salesRabbitMQ.exchange.Name,
         routing_key=salesRabbitMQ.exchange.BindingKey,
     )
-    channel.basic_publish(
-        exchange=salesRabbitMQ.exchange.Name,
-        routing_key=salesRabbitMQ.exchange.BindingKey,
-        body=message
-    )
+
+    sliceToQueue: list[SalesQueue] = [
+        SalesQueue(outletBridgingID=14049, startDate=1626800400, endDate=1626800400).model_dump(),
+        SalesQueue(outletBridgingID=6829, startDate=1626800400, endDate=1626800400).model_dump(),
+        SalesQueue(outletBridgingID=1052, startDate=1626800400, endDate=1626800400).model_dump(),
+        SalesQueue(outletBridgingID=19363, startDate=1626800400, endDate=1626800400).model_dump(),
+        SalesQueue(outletBridgingID=13469, startDate=1626800400, endDate=1626800400).model_dump(),
+        SalesQueue(outletBridgingID=1067, startDate=1626800400, endDate=1626800400).model_dump(),
+        SalesQueue(outletBridgingID=19436, startDate=1626800400, endDate=1626800400).model_dump(),
+    ]
+    for value in sliceToQueue:
+        print(f"sales to queue {value}")
+        channel.basic_publish(
+            exchange=salesRabbitMQ.exchange.Name,
+            routing_key=salesRabbitMQ.exchange.BindingKey,
+            body=json.dumps(value)
+        )
+
     # print("exchange: ", salesRabbitMQ.Exchange.Name)
+
+    # print(sliceToQueue)
     print("send queue")
 
     return success_response(None)
