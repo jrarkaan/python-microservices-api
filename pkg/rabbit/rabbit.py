@@ -4,7 +4,7 @@ from app.config.config import GetSettings
 settings = GetSettings()
 
 
-def RabbitMQConnection():
+def RabbitMQConnection() -> pika.BlockingConnection:
     connection_params = pika.ConnectionParameters(
         host=settings.Rabbitmq.Host,  # RabbitMQ server hostname or IP address
         port=settings.Rabbitmq.Port,  # RabbitMQ server port (default is 5672)
@@ -15,7 +15,6 @@ def RabbitMQConnection():
         ),
         heartbeat=0,  # Heartbeat interval in seconds (0 disables)
         blocked_connection_timeout=None,  # Connection timeout for blocked resources
-        ssl=False  # Set to True if using SSL/TLS
     )
     # Establish a connection to RabbitMQ server
     connection = pika.BlockingConnection(connection_params)
