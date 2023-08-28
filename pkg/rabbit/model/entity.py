@@ -1,5 +1,6 @@
 import pika
-from pydantic_settings import BaseSettings
+from pydantic import BaseModel
+from typing import Union
 
 """ 
     @desc: for more detail about documentation about RabbitMQ and Python. please
@@ -7,7 +8,7 @@ from pydantic_settings import BaseSettings
 """
 
 
-class Exchange(BaseSettings):
+class Exchange(BaseModel):
     Name: str
     KindOfExchange: str
     BindingKey: str
@@ -16,32 +17,32 @@ class Exchange(BaseSettings):
     AutoDelete: bool
     Internal: bool
     NoWait: bool
-    Arguments: dict
+    Arguments: Union[dict, None]
     Mandatory: bool
     Immediate: bool
 
 
-class Queue(BaseSettings):
+class Queue(BaseModel):
     Name: str
     Durable: bool
     AutoDelete: bool
     Exclusive: bool
     NoWait: bool
-    Arguments: dict
+    Arguments: Union[dict, None]
     PrefetchCount: int
     PrefetchSize: int
     PrefetchGlobal: bool
 
 
-class Consume(BaseSettings):
+class Consume(BaseModel):
     AutoAck: bool
     Exclusive: bool
     NoLocal: bool
     NoWait: bool
-    Arguments: dict
+    Arguments: Union[dict, None]
 
 
-class RabbitMQ(BaseSettings):
-    Exchange: Exchange
-    Queue: Queue
-    Consume: Consume
+class RabbitMQ(BaseModel):
+    exchange: Exchange
+    queue: Queue
+    consume: Consume

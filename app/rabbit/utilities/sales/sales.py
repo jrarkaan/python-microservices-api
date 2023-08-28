@@ -1,37 +1,44 @@
 from pkg.rabbit.model.entity import RabbitMQ
 
 
-def SalesRabbitMQ():
+def SalesRabbitMQ() -> RabbitMQ:
     exchangeSalesName: str = "EthicalSales"
     kindOfExchange: str = "fanout"
     routingKey: str = "ethical_sales_gt_upsert"
     queueName: str = "ethical_sales_gt_upsert"
 
-    SalesEthicalRabbit = RabbitMQ
-    SalesEthicalRabbit.Exchange.Name = exchangeSalesName
-    SalesEthicalRabbit.Exchange.KindOfExchange = kindOfExchange
-    SalesEthicalRabbit.Exchange.BindingKey = routingKey
-    SalesEthicalRabbit.Exchange.ConsumerTag = ""
-    SalesEthicalRabbit.Exchange.Durable = True
-    SalesEthicalRabbit.Exchange.AutoDelete = False
-    SalesEthicalRabbit.Exchange.Internal = False
-    SalesEthicalRabbit.Exchange.NoWait = False
-    SalesEthicalRabbit.Exchange.Arguments = None
-    SalesEthicalRabbit.Exchange.Mandatory = False
-    SalesEthicalRabbit.Exchange.Immediate = False
+    SalesEthicalRabbit = RabbitMQ(
+        exchange={
+            'Name': exchangeSalesName,
+            'KindOfExchange': kindOfExchange,
+            'BindingKey': routingKey,
+            'ConsumerTag': "",
+            'Durable': True,
+            'AutoDelete': False,
+            'Internal': False,
+            'NoWait': False,
+            'Arguments': None,
+            'Mandatory': False,
+            'Immediate': False,
+        },
+        queue={
+            'Name': queueName,
+            'Durable': False,
+            'AutoDelete': False,
+            'Exclusive': False,
+            'NoWait': False,
+            'Arguments': None,
+            'PrefetchCount': 1,
+            'PrefetchSize': 0,
+            'PrefetchGlobal': False,
+        },
+        consume={
+            'AutoAck': False,
+            'Exclusive': False,
+            'NoWait': False,
+            'NoLocal': False,
+            'Arguments': None
+        },
+    )
 
-    SalesEthicalRabbit.Queue.Name = queueName
-    SalesEthicalRabbit.Queue.Durable = False
-    SalesEthicalRabbit.Queue.AutoDelete = False
-    SalesEthicalRabbit.Queue.Exclusive = False
-    SalesEthicalRabbit.Queue.NoWait = False
-    SalesEthicalRabbit.Queue.Arguments = None
-    SalesEthicalRabbit.Queue.PrefetchCount = 1
-    SalesEthicalRabbit.Queue.PrefetchSize = 0
-    SalesEthicalRabbit.Queue.PrefetchGlobal = False
-
-    SalesEthicalRabbit.Consume.AutoAck = True
-    SalesEthicalRabbit.Consume.Exclusive = False
-    SalesEthicalRabbit.Consume.NoWait = False
-    SalesEthicalRabbit.Consume.NoLocal = False
-    SalesEthicalRabbit.Consume.Arguments = None
+    return SalesEthicalRabbit
