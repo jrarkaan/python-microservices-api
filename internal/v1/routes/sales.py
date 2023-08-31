@@ -9,10 +9,23 @@ from starlette.responses import JSONResponse
 from internal.v1.utilities.sales.model.entity import SalesQueue
 
 from app.rabbit.utilities.sales.sales import SalesRabbitMQ
-from pkg.rabbit.rabbit import RabbitMQConnection
-
+from pkg.rabbit.rabbit import RabbitMQPackage
+from app.config.config import GetSettings
 
 router = APIRouter()
+salesRabbitMQConfig: RabbitMQ = SalesRabbitMQ()
+
+settings = GetSettings()
+rabbitMQConfig = RabbitMQPackage(
+    host=settings.Rabbitmq.Host,
+    port=settings.Rabbitmq.Port,
+    virtual_host="/",
+    c_username=settings.Rabbitmq.User,
+    c_password=settings.Rabbitmq.Password,
+    heartbeat=0,
+    blocked_connection_timeout=None,
+)
+rabbitMQConfig.connection()
 
 @router.get("/v1/sales", response_model=success_response)
 async def getSales() -> JSONResponse:
@@ -21,22 +34,6 @@ async def getSales() -> JSONResponse:
 
 @router.post("/v1/sales/send-queue", response_model=success_response)
 async def postSendSalesQueue() -> JSONResponse:
-    salesRabbitMQ: RabbitMQ = SalesRabbitMQ()
-    print(f"Exchange name: {salesRabbitMQ.exchange.Name}")
-
-    channel = RabbitMQConnection().channel()
-    channel.exchange_declare(
-        exchange=salesRabbitMQ.exchange.Name,
-        exchange_type=salesRabbitMQ.exchange.KindOfExchange,
-        durable=salesRabbitMQ.exchange.Durable,
-        auto_delete=salesRabbitMQ.exchange.AutoDelete,
-        internal=salesRabbitMQ.exchange.Internal,
-    )
-    channel.queue_bind(
-        queue=salesRabbitMQ.queue.Name,
-        exchange=salesRabbitMQ.exchange.Name,
-        routing_key=salesRabbitMQ.exchange.BindingKey,
-    )
 
     sliceToQueue: list[SalesQueue] = [
         SalesQueue(outletBridgingID=14049, startDate=1626800400, endDate=1626800400).model_dump(),
@@ -49,10 +46,16 @@ async def postSendSalesQueue() -> JSONResponse:
     ]
     for value in sliceToQueue:
         print(f"sales to queue {value}")
-        channel.basic_publish(
-            exchange=salesRabbitMQ.exchange.Name,
-            routing_key=salesRabbitMQ.exchange.BindingKey,
-            body=json.dumps(value)
+        rabbitMQConfig.publisher_rabbit(
+                salesRabbitMQConfig.exchange.Name,
+                salesRabbitMQConfig.exchange.KindOfExchange,
+                salesRabbitMQConfig.exchange.BindingKey,
+                salesRabbitMQConfig.exchange.ConsumerTag,
+                salesRabbitMQConfig.exchange.Durable,
+                salesRabbitMQConfig.exchange.AutoDelete,
+                salesRabbitMQConfig.exchange.Internal,
+                salesRabbitMQConfig.queue.Name,
+                json.dumps(value)
         )
 
     # print("exchange: ", salesRabbitMQ.Exchange.Name)
