@@ -36,13 +36,13 @@ async def getSales() -> JSONResponse:
 async def postSendSalesQueue() -> JSONResponse:
 
     sliceToQueue: list[SalesQueue] = [
-        SalesQueue(outletBridgingID=14049, startDate=1626800400, endDate=1626800400).model_dump(),
-        SalesQueue(outletBridgingID=6829, startDate=1626800400, endDate=1626800400).model_dump(),
-        SalesQueue(outletBridgingID=1052, startDate=1626800400, endDate=1626800400).model_dump(),
-        SalesQueue(outletBridgingID=19363, startDate=1626800400, endDate=1626800400).model_dump(),
-        SalesQueue(outletBridgingID=13469, startDate=1626800400, endDate=1626800400).model_dump(),
-        SalesQueue(outletBridgingID=1067, startDate=1626800400, endDate=1626800400).model_dump(),
-        SalesQueue(outletBridgingID=19436, startDate=1626800400, endDate=1626800400).model_dump(),
+        SalesQueue(outlet_bridging_id=14049, start_date=1626800400, end_date=1626800400).model_dump(),
+        SalesQueue(outlet_bridging_id=6829, start_date=1626800400, end_date=1626800400).model_dump(),
+        SalesQueue(outlet_bridging_id=1052, start_date=1626800400, end_date=1626800400).model_dump(),
+        SalesQueue(outlet_bridging_id=19363, start_date=1626800400, end_date=1626800400).model_dump(),
+        SalesQueue(outlet_bridging_id=13469, start_date=1626800400, end_date=1626800400).model_dump(),
+        SalesQueue(outlet_bridging_id=1067, start_date=1626800400, end_date=1626800400).model_dump(),
+        SalesQueue(outlet_bridging_id=19436, start_date=1626800400, end_date=1626800400).model_dump(),
     ]
     for value in sliceToQueue:
         print(f"sales to queue {value}")

@@ -3,6 +3,6 @@ from pydantic import (
 )
 
 class SalesQueue(BaseModel):
-    outletBridgingID: int
-    startDate: int
-    endDate: int
+    outlet_bridging_id: int
+    start_date: int
+    end_date: int
